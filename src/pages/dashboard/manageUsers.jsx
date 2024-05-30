@@ -26,18 +26,21 @@ import {
   KeyIcon
 } from "@heroicons/react/24/outline";
 // import { Link, useLocation } from "react-router-dom";
-import { IsLogin } from "@/context";
+import { IsLogin, Role } from "@/context";
 import { getCookie, setCookie } from "cookies-next";
 import ListUsers from "@/api/auth/listUsers";
 import changePassword from "@/api/auth/changePasword";
 import { ToastContainer, toast } from "react-toastify";
 import createUser from "@/api/auth/createUser";
+import { Navigate, useNavigate } from "react-router-dom";
 
 
 
 export function ManageUsers() {
   const [data, setData] = useState([]);
   const isLogin = useContext(IsLogin);
+  const isRole = useContext(Role);
+  const navigate = useNavigate();
 
   const [selectedUsername, setSelectedUsername] = useState('');
   const [formChangePassData, setFormChangePassData] = useState({
@@ -67,7 +70,7 @@ export function ManageUsers() {
 
   const handleInputChange = (formType) => (e) => {
     const { name, value } = e.target;
-  
+
     // Update form data based on formType
     if (formType === 'changePassword') {
       setFormChangePassData({
@@ -81,7 +84,7 @@ export function ManageUsers() {
       });
     }
   };
-  
+
 
   const handleInputSelectChange = (formType) => (e) => {
     const { name, value } = e.target;
@@ -109,7 +112,6 @@ export function ManageUsers() {
   const handleChangePassword = async () => {
     const res = await changePassword({ newPassword: formChangePassData.newPassword, username: selectedUsername }, getCookie('token'));
     if (res) {
-      console.log(res)
       if (res.status === '200') {
         toast.success(res.message, {
           position: "top-center",
@@ -121,46 +123,27 @@ export function ManageUsers() {
           progress: undefined,
           theme: "light",
         });
-        console.log("changed password")
+        // console.log("changed password")
       }
-      if (res.err.type === "service") {
-        if (res.err.data.code === -1) {
-          toast.error(res.message, {
-            position: "top-center",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "light",
-          });
-        }
+
+      if (res.err.type === "validator" || res.err.type === "service") {
+        toast.error(res.message, {
+          position: "top-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
       }
     }
-    setformChangePassData({
+    setFormChangePassData({
       newPassword: "",
       confirmNewPassword: ""
     })
   };
-  // const validatePasswords = () => {
-  //   if (formCreateUserData.password !== formCreateUserData.confirmPassword) {
-  //     // console.log('err')
-  //     toast.error("Password do not match", {
-  //       position: "top-center",
-  //       autoClose: 4000,
-  //       hideProgressBar: false,
-  //       closeOnClick: true,
-  //       pauseOnHover: true,
-  //       draggable: true,
-  //       progress: undefined,
-  //       theme: "light",
-  //     });
-  //     return false;
-  //   } else {
-  //     return true;
-  //   }
-  // }
 
   const validatePasswords = () => {
     if (formCreateUserData.password !== formCreateUserData.confirmPassword || formChangePassData.newPassword !== formChangePassData.confirmNewPassword) {
@@ -184,7 +167,6 @@ export function ManageUsers() {
       role: formCreateUserData.role,
     }, getCookie('token'));
     if (res) {
-      console.log(res)
       if (res.status === '200') {
         toast.success(res.message, {
           position: "top-center",
@@ -196,16 +178,28 @@ export function ManageUsers() {
           progress: undefined,
           theme: "light",
         });
-        console.log("changed password")
-        setFormCreateUserData({
-          name: '',
-          username: '',
-          password: '',
-          confirmPassword: '',
-          role: '',
-        })
+
+      }
+      if (res.err.type === "validator" || res.err.type === "service") {
+        toast.error(res.message, {
+          position: "top-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
       }
     }
+    setFormCreateUserData({
+      name: '',
+      username: '',
+      password: '',
+      confirmPassword: '',
+      role: '',
+    })
   }
 
   useEffect(() => {
@@ -213,9 +207,12 @@ export function ManageUsers() {
       setCookie("isReload", "true");
       window.location.reload();
     }
-
+    if (isRole === "admin") {
+      getListUsers();
+    } else {
+      navigate('/')
+    }
     // getAnalyze();
-    getListUsers();
     // getMasterData();
   }, []);
 
@@ -304,8 +301,7 @@ export function ManageUsers() {
                   return (
                     <tr key={key} className="even:bg-blue-gray-50/50">
                       <td
-                        className={`cursor-pointer w-60 ${className}`}
-                        onClick={() => console.log('access profile')}
+                        className={`w-60 ${className}`}
                       >
                         <Typography
                           variant="small"
@@ -416,20 +412,21 @@ export function ManageUsers() {
                           />
                         </div>
                         {(error !== "") && (
-                            <Typography
-                              variant="small"
-                              color="red"
-                              className="mt-2"
-                            >
-                              {error}
-                            </Typography>
-                          )}
+                          <Typography
+                            variant="small"
+                            color="red"
+                            className="mt-2"
+                          >
+                            {error}
+                          </Typography>
+                        )}
                         <div className="flex gap-2">
-                          <Button variant="outlined" className="mt-6" fullWidth onClick={() => {handleCloseDialog()
-                                                                                                setFormChangePassData({
-                                                                                                  newPassword: '',
-                                                                                                  confirmNewPassword: ''
-                                                                                                })
+                          <Button variant="outlined" className="mt-6" fullWidth onClick={() => {
+                            handleCloseDialog()
+                            setFormChangePassData({
+                              newPassword: '',
+                              confirmNewPassword: ''
+                            })
                           }}>
                             Close
                           </Button>
@@ -458,23 +455,6 @@ export function ManageUsers() {
                         <Typography variant="h5" color="blue-gray" className="text-center">
                           Create User
                         </Typography>
-                        {/* <div className="py-2">
-                          <Typography
-                            variant="small"
-                            color="blue-gray"
-                            className="font-medium"
-                          >
-                            Username
-                          </Typography>
-                          <Typography
-                            variant="small"
-                            color="blue-gray"
-                            className="font-small pl-3"
-                          >
-                            {selectedUsername}
-                          </Typography>
-                        </div> */}
-
                         <div className="mb-1 flex flex-col gap-6">
                           <Typography
                             variant="small"
@@ -586,7 +566,7 @@ export function ManageUsers() {
                             name="role"
                           >
                             <Option value="1">Admin</Option>
-                            <Option value="2">User</Option>
+                            <Option value="2">Staff</Option>
 
                           </Select>
                           {/* <Input
@@ -601,7 +581,7 @@ export function ManageUsers() {
                             value={formData.reTypeNewPassword}
                             onChange={handleInputChange}
                           /> */}
-                          
+
                         </div>
                         <div className="flex gap-2">
                           <Button variant="outlined" className="mt-6" fullWidth onClick={() => {

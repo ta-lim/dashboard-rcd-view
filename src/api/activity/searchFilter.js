@@ -1,4 +1,4 @@
-export default async function searchFilter( data, category, subCategory ){
+export default async function searchFilter( data, category ){
   let queryString = '';
 
   // Iterate over each filter object in the input data
@@ -14,9 +14,7 @@ export default async function searchFilter( data, category, subCategory ){
   // Remove the leading '&' character from the query string
   queryString = queryString.slice(1);
   let url = `${import.meta.env.VITE_HOST}/${import.meta.env.VITE_VERSION}/primary/rcd/filter?${queryString}&category=${category}`
-  if (subCategory !== "-1") {
-    url += `&subCategory=${subCategory}`;
-  }
+  
 
   try{
       if(queryString !== ''){
@@ -34,7 +32,6 @@ export default async function searchFilter( data, category, subCategory ){
         
         if(res){
           if(res.status === 200){
-            // console.log(res)
             return {status: '200', data: res.data};
           }
         }

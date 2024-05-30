@@ -26,6 +26,7 @@ import getDetail from "@/api/activity/getDetail";
 import deleteData from "@/api/activity/deleteData";
 import { getCookie } from "cookies-next";
 import { Role } from "@/context";
+import dayjs from "dayjs";
 
 export function ProjectDetail() {
   const [data, setData] = useState([]);
@@ -92,7 +93,8 @@ export function ProjectDetail() {
                 crNumber: data.crNumber,
                 UIC: data.UIC,
                 status: data.status,
-                timeline: (isActivityPath) ? data.timelineActivity: data.timelineProject 
+                timeline:  isProjectPath ? dayjs(data.timeline).format('MMMM YYYY') : dayjs(data.timeline). format('DD MMMM YYYY')
+
               }}
               action={
                 <>
@@ -112,7 +114,6 @@ export function ProjectDetail() {
         </CardBody>
       </Card>
     </>
-    // ) : navigate('/project')
   );
 }
 

@@ -42,6 +42,7 @@ import downloadXls from "@/api/activity/downloadXls";
 import updateStatus from "@/api/activity/updateStatus";
 import getMasterDataFilter from "@/api/activity/getMasteraDataFilter";
 import searchFilter from "@/api/activity/searchFilter";
+import dayjs from "dayjs";
 
 export function Home() {
   const location = useLocation();
@@ -104,53 +105,31 @@ export function Home() {
 
       // Call the API to update the status
       updateStatus(statusUpdate, getCookie("token"))
-        .then((res) => console.log(res))
-        .catch((error) => console.error("Error updating status:", error));
 
       return updatedData;
     });
   };
 
-  const remapData = (data) => {
-    // Check if data is not an array or is undefined
-    if (!Array.isArray(data) || data === undefined) {
-      console.error("Input data is not an array or is undefined.");
-      return []; // Return an empty array or handle this case based on your requirement
-    }
-
-    // Perform mapping operation on the array
-    return data.map((item) => ({
-      ...item,
-      // statusInfo: getStatusInfo(item.status),
-      timelineInfo: getTimelineInfo(item.timelineProject),
-    }));
-  };
-
   async function search() {
-    const res = await searchData(dataSearch, isBusinessPlanPath ? "3" : isActivityPath ? "2" : "1",
-      isBusinessPlanPath ? spesificBusinessPlan + 1 : "-1");
+    const res = await searchData(dataSearch, isBusinessPlanPath ? "3" : isActivityPath ? "2" : "1");
 
     if (res.status === "200") {
       setDataSearch("");
-      let remappedData = remapData(res.data);
-      setData(remappedData);
+      setData(res.data);
     }
   }
 
   async function searchFilterData(data) {
-    const res = await searchFilter(data, isBusinessPlanPath ? "3" : isActivityPath ? "2" : "1",
-      isBusinessPlanPath ? spesificBusinessPlan + 1 : "-1")
+    const res = await searchFilter(data, isActivityPath ? "2" : "1")
 
     if (res.status === "200") {
-      let remappedData = remapData(res.data);
-      console.log(res.data)
-      setData(remappedData);
+      setData(res.data);
     }
   }
 
   async function getAnalyze() {
     const res = await GetAnalyze(
-      isBusinessPlanPath ? "3" : isActivityPath ? "2" : "1",
+      isActivityPath ? "2" : "1",
       isBusinessPlanPath ? spesificBusinessPlan + 1 : "",
     );
     if (res) {
@@ -163,25 +142,24 @@ export function Home() {
 
   async function getAllData() {
     const res = await getData(
-      isBusinessPlanPath ? "3" : isActivityPath ? "2" : "1",
-      isBusinessPlanPath ? spesificBusinessPlan + 1 : "-1"
+      isActivityPath ? "2" : "1"
     );
     if (res) {
       if (res.status === "200") {
-        let remappedData = remapData(res.data);
-        setData(remappedData);
+        setData(res.data);
         setLoading(false)
       }
     }
   }
 
   async function getMasterData() {
-    const res = await getMasterDataFilter(isActivityPath ? "2" : "1")
-
-    if (res.status === "200") {
-      setMasterDataFilter(res.data)
-      console.log(masterDataFilter)
-    }
+    // if(masterDataFilter.length === 0){
+      const res = await getMasterDataFilter(isActivityPath ? "2" : "1")
+  
+      if (res.status === "200") {
+        setMasterDataFilter(res.data)
+      }
+    
   }
 
   const getLabel = (key, value) => {
@@ -233,11 +211,11 @@ export function Home() {
       setCookie("isReload", "true");
       window.location.reload();
     }
-
     getAnalyze();
     getAllData();
-    // getMasterData();
-  }, [isBusinessPlanPath, isActivityPath, isProjectPath, spesificBusinessPlan]);
+    setRowToggleStatus({})
+    setMasterDataFilter([])
+  }, [isActivityPath, isProjectPath]);
 
   useEffect(() => {
     if (handleOpenFilter) {
@@ -453,8 +431,7 @@ export function Home() {
                         description,
                         crNumber,
                         status,
-                        timelineInfo,
-                        timelineActivity,
+                        timeline,
                         updatedAt,
                       },
                       key,
@@ -560,16 +537,16 @@ export function Home() {
                                   });
                                   toggleRowStatus(key);
                                 }}
-                                className="w-32 "
+                                className="w-32 gap-2"
                                 // onChange={(e) => console.log(e)}
 
                                 name="status"
                               >
                                 {
                                   isActivityPath ? <>
-                                    <Option value="8">Pending Over SLA</Option>
-                                    <Option value="9">Pending On SLA</Option>
-                                    <Option value="10">Done</Option>
+                                    <Option value="8">Pending On SLA</Option>
+                                    <Option value="10">pending Over SLA</Option>
+                                    <Option value="9">Done</Option>
                                   </> :
                                     <>
                                       <Option value="7">Requirement</Option>
@@ -586,7 +563,6 @@ export function Home() {
                               <div
                                 className={` cursor-pointer`}
                                 onClick={() => {
-                                  console.log("change status");
                                   toggleRowStatus(key);
                                 }}
                               >
@@ -605,9 +581,8 @@ export function Home() {
                               </div>
                             )}
                           </td>
-                          <td className={className}>
-                            {
-                              isActivityPath ? 
+                          <td className={`${className}`}>
+
                               <Chip
                                 color={"blue-gray"}
                                 value={
@@ -616,28 +591,11 @@ export function Home() {
                                   color="white"
                                   className="font-medium capitalize leading-none"
                                 >
-                                  {timelineActivity}
+                                  {isProjectPath ? dayjs(timeline).format('MMMM YYYY') : dayjs(timeline). format('DD MMMM YYYY')}
                                 </Typography>
                                 }
                                 className={`flex rounded-full flex-col items-center w-32`}
                               />
-                               :
-
-                              <Chip
-                                color={"blue-gray"}
-                                value={
-                                  <Typography
-                                    variant="small"
-                                    color="white"
-                                    className="font-medium capitalize leading-none"
-                                  >
-                                    {timelineInfo.label}
-                                  </Typography>
-                                }
-                                className={`flex rounded-full flex-col items-center w-32`}
-                              />
-
-                            } 
                           </td>
                           {
                             // isLogin &&

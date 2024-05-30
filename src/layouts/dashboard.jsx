@@ -11,6 +11,8 @@ import routes from "@/routes";
 import { ManageUsers, ProjectDetail, ProjectForm } from "@/pages/dashboard";
 // import {  } from "@/pages/dashboard";
 import { useMaterialTailwindController, setOpenConfigurator } from "@/context";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export function Dashboard() {
   const [controller, dispatch] = useMaterialTailwindController();
@@ -39,7 +41,7 @@ export function Dashboard() {
         <Routes>
           {routes.map(
             ({ layout, pages }) =>
-              layout === "dashboard" &&
+              layout === "rcd" &&
               pages.map(({ path, element }) =>
                 <Route path={path} element={element} />
               )
@@ -56,6 +58,18 @@ export function Dashboard() {
           <Footer />
         </div>
       </div>
+      <ToastContainer
+        position="top-center"
+        autoClose={2500}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover={false}
+        theme="dark"
+        transition:Bounce />
     </div>
   );
 }

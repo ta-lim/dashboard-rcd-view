@@ -29,7 +29,7 @@ const getSubCategoryInfo = (subCategory) => {
 export function ProjectInfoCard({ title, description, details, action }) {
   const {labelStatus, colorStatus} = getStatusInfo(details['status'])
   const {label, color} = getTimelineInfo(details['timeline'])
-  const {labelSubCategory, colorSubCategory} = getSubCategoryInfo(details['subCategory'])
+  // const {labelSubCategory, colorSubCategory} = getSubCategoryInfo(details['subCategory'])
   const isLogin = useContext(IsLogin)
    return (
     <Card color="transparent" shadow={false}>
@@ -73,7 +73,7 @@ export function ProjectInfoCard({ title, description, details, action }) {
                   </Typography>
                 </div>
                 :<Chip
-                    color={el === 'subCategory' ? colorSubCategory : color} 
+                    color={color} 
                     size="md" 
                     value={
                       <Typography

@@ -15,11 +15,11 @@ export const getStatusInfo = (status) => {
     case "7":
       return { labelStatus: 'Requirement', colorStatus: 'bg-red-500'};
     case "8":
-      return { labelStatus: 'Pending Over SLA', colorStatus: 'bg-red-500'};
+      return { labelStatus: 'Pending On SLA', colorStatus: 'bg-yellow-500'};
     case "9":
-      return { labelStatus: 'Pending On SLA', colorStatus: 'bg-yellow-700'};
+      return { labelStatus: 'Done', colorStatus: 'bg-green-700'};
     case "10":
-      return { labelStatus: 'Done', colorStatus: 'bg-green-500'}
+      return { labelStatus: 'Pending Over SLA', colorStatus: 'bg-red-500'}
     default:
       return { labelStatus: 'Unknown Status', colorStatus: 'gray' };
   }

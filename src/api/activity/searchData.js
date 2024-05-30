@@ -1,9 +1,6 @@
-export default async function searchData( title, category, subCategory ) {
+export default async function searchData( title, category ) {
 
   let url = `${import.meta.env.VITE_HOST}/${import.meta.env.VITE_VERSION}/primary/rcd/search?title=${title}&category=${category}`;
-  if (subCategory !== null) {
-      url += `&subCategory=${subCategory}`;
-  }
   try {
     const res = await fetch(url,
       {

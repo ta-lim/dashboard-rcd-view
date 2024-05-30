@@ -12,7 +12,7 @@ export default async function createUser( data, auth ){
 
   if(res) {
     if(res.status === 200) {
-      return {status: "200", data: res.data}
+      return {status: "200", message: res.message}
     }
     return {status: res.status, err: res.err, message: res.message}
   }

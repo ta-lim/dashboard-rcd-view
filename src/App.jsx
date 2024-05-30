@@ -4,9 +4,6 @@ import { IsLogin, Role, Name } from "./context";
 import { useEffect, useState } from "react";
 import CheckToken from "./api/auth/checkToken";
 import { getCookie } from "cookies-next";
-import { ManageUsers } from "./pages/dashboard";
-// import ProtectedRoute from "./ProtectedRoute.js";
-
 
 function App() {
   const [isLogin, setIsLogin] = useState(null);
@@ -23,7 +20,6 @@ function App() {
             setIsLogin(true)
             setRole(res.data.role)
             setName(res.data.name)
-            // console.log(res.)
           }
         }
       }
@@ -31,25 +27,14 @@ function App() {
 
     checkToken()
   }, [])
-  // console.log(isLogin, role)
   return (
     <IsLogin.Provider value={isLogin}>
       <Role.Provider value={role}>
         <Name.Provider value={name}>
         <Routes>
-          <Route path="/dashboard/*" element={<Dashboard />} />
+          <Route path="/rcd/*" element={<Dashboard />} />
           <Route path="/auth/*" element={<Auth />} />
-          <Route path="*" element={<Navigate to="/dashboard/project" replace />} />
-          {/* <Route
-            path="/dashboard/manage-user"
-            element={
-              isLogin && role === "admin" ? (
-                <Dashboard />
-              ) : (
-                <Navigate to="/dashboard/" replace />
-              )
-            }
-          /> */}
+          <Route path="*" element={<Navigate to="/rcd/project" replace />} />
         </Routes>
         </Name.Provider>
       </Role.Provider>

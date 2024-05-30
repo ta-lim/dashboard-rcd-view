@@ -17,7 +17,7 @@ const path = ['project', 'activity']
 
 export const routes = [
   {
-    layout: "dashboard",
+    layout: "rcd",
     pages: [
       {
         icon: <ClipboardDocumentListIcon {...icon} />,

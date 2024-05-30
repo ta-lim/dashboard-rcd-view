@@ -31,12 +31,6 @@ export function SignIn() {
       [name]: value,
     });
   };
-  function AlertIcon(message) {
-    console.log(message)
-    return (
-      <Alert color="red" >{message}</Alert>
-    )
-  }
   const handleSignIn = async () => {
 
       const res = await login(formData)
@@ -53,7 +47,6 @@ export function SignIn() {
         }
         if(res.err.type === "service"){
           if(res.err.data.code === -1){
-            console.log(res.message)
             toast.error(res.message, {
               position: "top-center",
               autoClose: 5000,

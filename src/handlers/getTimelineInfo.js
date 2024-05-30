@@ -9,8 +9,8 @@ export const getTimelineInfo = (timeline) => {
     case "4":
       return { label: "Q4 - 2024", color: 'blue-gray'};
     default:
-      console.warn(`Unknown timeline value: ${timeline}`);
-      return { label: "Unknown", color: 'gray'};
+      // console.warn(`Unknown timeline value: ${timeline}`);
+      return { label: timeline, color: 'blue-gray'};
   }
 }
 
