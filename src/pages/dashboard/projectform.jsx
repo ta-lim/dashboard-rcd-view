@@ -5,7 +5,7 @@ import createData from "@/api/activity/createData";
 import getDetail from "@/api/activity/getDetail";
 import updateData from "@/api/activity/updateData";
 import { useContext } from "react";
-import { IsLogin } from "@/context";
+import { IsLogin, Role } from "@/context";
 import { getCookie } from "cookies-next";
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -20,6 +20,7 @@ export function ProjectForm() {
   const location = useLocation();
   const navigate = useNavigate();
   const isLogin = useContext(IsLogin)
+  const isRole = useContext(Role)
   const [isCategory, setCategory] = useState()
 
   const isProjectPath = location.pathname.includes('project');
@@ -207,6 +208,7 @@ export function ProjectForm() {
             variant="standard"
             error={formErrors.title} // error is true if formErrors.title is not an empty string
             label={formErrors.title}
+            disabled = {id && !(isRole === "admin")}
           />
         </div>
         <div className="flex mb-3">
@@ -242,6 +244,7 @@ export function ProjectForm() {
             variant="standard"
             error={formErrors.picOne}
             label={formErrors.picOne}
+            disabled = {id && !(isRole === "admin")}
           />
         </div>
         <div className="flex mb-3 w-2/5 flex-col md:flex-row">
@@ -258,6 +261,7 @@ export function ProjectForm() {
             value={formData.picTwo}
             onChange={handleChange}
             variant="standard"
+            disabled = {id && !(isRole === "admin")}
           />
         </div>
         <div className="flex mb-3 w-2/5 flex-col md:flex-row">
@@ -292,6 +296,7 @@ export function ProjectForm() {
             variant="standard"
             error={formErrors.UIC}
             label={formErrors.UIC}
+            disabled = {id && !(isRole === "admin")}
           />
         </div>
         <div className={`flex mb-3 items-center w-2/5 md:w-3/5`}>
